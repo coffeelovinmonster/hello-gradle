@@ -1,0 +1,3 @@
+rootproject.name = 'hello-gradle'
+
+include 'npm-app'
