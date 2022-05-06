@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath 'com.github.node-gradle:gradle-node-plugin:3.2.1'
+    }
+}
+
+apply plugin: 'base'
+apply plugin: 'com.github.node-gradle.node'
+
+node {
+    // not specifying the node/npm versions as using local installs
+    download = false
+}
+
+// using this example as template : https://github.com/node-gradle/gradle-node-plugin/tree/master/examples/simple-node/npm
+task helloGradle(type: NodeTask, dependsOn: 'npmInstall') {
+    script = file('src/index.js')
+}
+
+// might have to use one from here: https://github.com/node-gradle/gradle-node-plugin/blob/master/examples/vertx-react/webapp/build.gradle
+def helloGradleBuild = tasks.register("buildWebApp", NpmTask) {
+    npmCommand = ["run"]
+    args = ["build-dev"]
+    dependsOn(npmInstall)
+    inputs.dir("src")
+    inputs.dir("node_modules")
+    outputs.dir("dist")
+    outputs.upToDateWhen{false}
+}
